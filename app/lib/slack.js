@@ -134,6 +134,24 @@ export async function getNameByScrapId(id, { token = null } = {}) {
     .fields["Name"];
 }
 
+export async function reviewSession({recordID, status = null, percent = null, token = null}) {
+  if (!recordID) { throw new Error('recordID is required') }
+  if (!['Approved', 'Rejected', 'Unreviewed'].includes(status)) { throw new Error('status must be "Approved" or "Rejected" or "Unreviewed') }
+
+  const airtableToken = token || process.env.AIRTABLE_TOKEN
+  const Airtable = require('airtable')
+  const baseID = "app4kCWulfB02bV8Q"
+  const base = new Airtable({ apiKey: airtableToken }).base(baseID)
+  const table = base('Sessions')
+
+  const fieldsToUpdate = {}
+  if (status) { fieldsToUpdate.Status = status }
+  if (percent != null) { fieldsToUpdate.Percent = percent }
+
+  const record = await table.update(recordID, fieldsToUpdate)
+  return record
+}
+
 // async function test() {
 //   const result = await getDataForReview({scrapbookRecordID: 'reccPeTHeCNymBT9Y'})
 //   console.log({result})
