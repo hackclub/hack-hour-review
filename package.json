@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "airtable": "^0.12.2",
+    "dotenv": "^16.4.5",
     "fs": "^0.0.1-security",
     "next": "14.2.4",
     "react": "^18",
