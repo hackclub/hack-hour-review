@@ -1,7 +1,7 @@
 const scrapbookChannel = 'C01504DCLVD'
 const arcadeChannel = 'C06SBHMQU8G'
 
-async function getSlackThread({threadTS, channel, token = null, page = 1}) {
+export async function getSlackThread({threadTS, channel, token = null, page = 1}) {
   const slackToken = token || process.env.SLACK_TOKEN
   if (!threadTS || !channel) { throw new Error('threadTS and channel are required') }
   if (!slackToken) { throw new Error('SLACK_TOKEN is required') }
@@ -18,7 +18,7 @@ async function getSlackThread({threadTS, channel, token = null, page = 1}) {
   return messages
 }
 
-async function getScrapbookRecord({recordID, token = null}) {
+export async function getScrapbookRecord({recordID, token = null}) {
   const airtableToken = token || process.env.AIRTABLE_TOKEN
   const Airtable = require('airtable')
   const baseID = "app4kCWulfB02bV8Q"
@@ -28,7 +28,7 @@ async function getScrapbookRecord({recordID, token = null}) {
   return record
 }
 
-async function getArcadeRecord({recordID, token = null}) {
+export async function getArcadeRecord({recordID, token = null}) {
   const airtableToken = token || process.env.AIRTABLE_TOKEN
   const Airtable = require('airtable')
   const baseID = "app4kCWulfB02bV8Q"
@@ -38,7 +38,7 @@ async function getArcadeRecord({recordID, token = null}) {
   return record
 }
 
-async function getDataForReview({scrapbookRecordID, airtableToken, slackToken}) {
+export async function getDataForReview({scrapbookRecordID, airtableToken, slackToken}) {
   const result = {}
 
   // get the main scrapbook record
@@ -59,7 +59,7 @@ async function getDataForReview({scrapbookRecordID, airtableToken, slackToken}) 
 
   // fill in linked sessions
   const sessionIDs = result.scrap.sessionIDs
-  for (i = 0; i < sessionIDs.length; i++) {
+  for (let i = 0; i < sessionIDs.length; i++) {
     const sessionID = sessionIDs[i]
     const record = await getArcadeRecord({recordID: sessionID, token: airtableToken})
     const sessionFields = {
@@ -78,9 +78,19 @@ async function getDataForReview({scrapbookRecordID, airtableToken, slackToken}) 
   return result
 }
 
-async function test() {
-  const result = await getDataForReview({scrapbookRecordID: 'reccPeTHeCNymBT9Y'})
-  console.log({result})
+export async function getAllScrapbooks({token = null}={}) {
+  const airtableToken = token || process.env.AIRTABLE_TOKEN
+  const Airtable = require('airtable')
+  const baseID = "app4kCWulfB02bV8Q"
+  const base = new Airtable({ apiKey: airtableToken }).base(baseID)
+  const table = base('Scrapbook')
+  const records = await table.select().all()
+  return records.map(r => r.id)
 }
 
-test()
+// async function test() {
+//   const result = await getDataForReview({scrapbookRecordID: 'reccPeTHeCNymBT9Y'})
+//   console.log({result})
+// }
+
+// test()
