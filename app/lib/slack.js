@@ -55,12 +55,8 @@ export async function getArcadeRecord({ recordID, token = null }) {
   return record;
 }
 
-export async function getDataForReview({
-  scrapbookRecordID,
-  airtableToken,
-  slackToken,
-}) {
-  const result = {};
+export async function getDataForReview({scrapbookRecordID, airtableToken, slackToken, includeSessions = true, includeMessages = true}) {
+  const result = {}
 
   // get the main scrapbook record
   const scrapbookRecord = await getScrapbookRecord({
@@ -78,36 +74,31 @@ export async function getDataForReview({
   };
 
   // fill in slack messages for scrapbook
-  const slackScrapbookThread = await getSlackThread({
-    threadTS: result.scrap.slackTS,
-    channel: scrapbookChannel,
-    token: slackToken,
-  });
-  result.scrap.messages = slackScrapbookThread;
+  if (includeMessages) {
+    const slackScrapbookThread = await getSlackThread({threadTS: result.scrap.slackTS, channel: scrapbookChannel, token: slackToken})
+    result.scrap.messages = slackScrapbookThread
+  }
 
   // fill in linked sessions
-  const sessionIDs = result.scrap.sessionIDs;
-  for (let i = 0; i < sessionIDs.length; i++) {
-    const sessionID = sessionIDs[i];
-    const record = await getArcadeRecord({
-      recordID: sessionID,
-      token: airtableToken,
-    });
-    const sessionFields = {
-      id: record.id,
-      slackURL: record.get("Code URL") || "",
-      minutes: record.get("Minutes") || 0,
-      percent: record.get("Percent") || 0.0, // watch out for this field– it's between 0-1
-      status: record.get("Status") || "",
-      slackTS: record.get("Message TS") || "",
-      messages: [], // will code this later
-    };
-    sessionFields.messages = await getSlackThread({
-      threadTS: sessionFields.slackTS,
-      channel: arcadeChannel,
-      token: slackToken,
-    });
-    result.scrap.sessions.push(sessionFields);
+  if (includeSessions) {
+    const sessionIDs = result.scrap.sessionIDs
+    for (let i = 0; i < sessionIDs.length; i++) {
+      const sessionID = sessionIDs[i]
+      const record = await getArcadeRecord({recordID: sessionID, token: airtableToken})
+      const sessionFields = {
+        id: record.id,
+        slackURL: record.get('Code URL') || '',
+        minutes: record.get('Minutes') || 0,
+        percent: record.get('Percent') || 0.0, // watch out for this field– it's between 0-1
+        status: record.get('Status') || '',
+        slackTS: record.get('Message TS') || '',
+        messages: [], // will code this later
+      }
+      if (includeMessages) {
+        sessionFields.messages = await getSlackThread({threadTS: sessionFields.slackTS, channel: arcadeChannel, token: slackToken})
+        result.scrap.sessions.push(sessionFields)
+      }
+    }
   }
 
   return result;
@@ -134,7 +125,7 @@ export async function getNameByScrapId(id, { token = null } = {}) {
     .fields["Name"];
 }
 
-export async function reviewSession({recordID, status = null, percent = null, token = null}) {
+export async function updateSession({recordID, status = null, percent = null, token = null}) {
   if (!recordID) { throw new Error('recordID is required') }
   if (!['Approved', 'Rejected', 'Unreviewed'].includes(status)) { throw new Error('status must be "Approved" or "Rejected" or "Unreviewed') }
 
@@ -150,6 +141,20 @@ export async function reviewSession({recordID, status = null, percent = null, to
 
   const record = await table.update(recordID, fieldsToUpdate)
   return record
+}
+
+export async function attemptApproveScrapbook({scrapbookRecordID, airtableToken}) {
+  // if all sessions are reviewed, mark as approved.
+  // if some sessions are unreviewed, do nothing.
+  if (!scrapbookRecordID) { throw new Error('scrapbookRecordID is required') }
+
+  const airtableToken = token || process.env.AIRTABLE_TOKEN
+
+  const Airtable = require('airtable')
+  const baseID = "app4kCWulfB02bV8Q"
+  const base = new Airtable({ apiKey: airtableToken }).base(baseID)
+  const table = base('Scrapbook')
+  const record = await table.find(scrapbookRecordID)
 }
 
 // async function test() {
