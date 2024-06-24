@@ -1,4 +1,3 @@
-async function getSlackThread({threadTS, channel, token = null}) {
 const scrapbookChannel = 'C01504DCLVD'
 const arcadeChannel = 'C06SBHMQU8G'
 
