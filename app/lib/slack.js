@@ -1,13 +1,21 @@
 async function getSlackThread({threadTS, channel, token = null}) {
+const scrapbookChannel = 'C01504DCLVD'
+
+async function getSlackThread({threadTS, channel, token = null, page = 1}) {
   const slackToken = token || process.env.SLACK_TOKEN
   if (!threadTS || !channel) { throw new Error('threadTS and channel are required') }
   if (!slackToken) { throw new Error('SLACK_TOKEN is required') }
   
   const response = await fetch(`https://slack.com/api/conversations.replies?channel=${channel}&ts=${threadTS}`, {
     headers: { 'Authorization': `Bearer ${slackToken}` }
-  })
+  }).then(r => r.json())
 
-  return response.json()
+  const { messages, has_more } = response
+  if (has_more) {
+    const nextMessages = await getSlackThread({threadTS, channel, token: slackToken, page: page + 1})
+    messages.push(...nextMessages)
+  }
+  return messages
 }
 
 async function getScrapbookRecord({recordID, token = null}) {
@@ -28,22 +36,12 @@ async function getDataForReview({scrapbookRecordID, airtableToken, slackToken}) 
     slackURL: scrapbookRecord.get('Scrapbook URL') || '',
     sessionIDs: scrapbookRecord.get('Session IDs') || [],
     sessions: [], // will code this later
-    messages: [], // will code this later
-    ts: scrapbookRecord.get('Scrapbook TS') || '',
+    messages: [],
+    slackTS: scrapbookRecord.get('Scrapbook TS') || '',
     approved: scrapbookRecord.get('Approved') || false,
-
-    // URL: "https://arcade-session-url.com",
-    //     mins: 60,
-    //     percent: 100,
-    //     status: "Unreviewed",
-    //     ts: 1719041321.954869,
-    //     id: "reccPeTHeCNymBT9Y",
-    //     messages: [
-    //       { type: "image", URL: "https://some-image-url.com" },
-    //       { type: "link", URL: "https://github.com/hackclub/OnBoard" },
-    //       { type: "text", contents: "I made my OnBoard PR!" },
-    //     ],
   }
+  const slackScrapbookThread = await getSlackThread({threadTS: result.scrap.slackTS, channel: scrapbookChannel, token: slackToken})
+  result.scrap.messages = slackScrapbookThread
   return result
 }
 
