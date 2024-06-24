@@ -1,9 +1,9 @@
-import { getDataForReview } from "@/app/lib/slack"
+import { getDataForReview } from "../../../lib/slack";
 
-export async function GET(_req, {params}) {
-  const { recordID } = params
+export async function GET(_req, { params }) {
+  const { recordID } = params;
 
-  const result = await getDataForReview({scrapbookRecordID: recordID})
+  const result = await getDataForReview({ scrapbookRecordID: recordID });
 
-  return Response.json({ ...result })
+  return Response.json({ ...result });
 }
