@@ -1,2 +1,43 @@
 loadingMessages:
-  - "I would have been faster if written in Rust"
+  - "I would have been faster if written in ${t.languages}!"
+  - "At least I wasn't written in ${t.languages}"
+  - "Written in ${t.languages} for maximum performance!"
+  - "Always be yourself, unless your username was already taken"
+  - "Due to inflation, we can only provide 1/4th of a penny for your thoughts"
+  - "In today's economy, a picture is only worth about 700 words"
+  - "Help, I'm trapped in a loading message factory!"
+  - "At least you're not on hold"
+  - "Downloading more RAM"
+  - "What's next for these prizes? ${t.prizes}?"
+  - "What's next for these projects? a ${t.projects}?"
+languages:
+  - Rust
+  - WASM
+  - php
+  - wasm for ${t.languages}
+projectIdeas:
+  - pet rock website?
+  - scammy multi-level marketing scheme for selling ${t.prizes}
+  - a dino/raccoon dating sim??
+prizes:
+  - a cybertruck
+  - thigh-high striped "hacker" socks
+  - a (vaccinated) raccoon
+  - a lifetime supply of ${t.foods}
+foods:
+  - ramen
+  - ice cream
+  - pizza
+  - ${t.foods}-flavored ice cream
+  - ${t.foods} pizza
+  - broccoli
+  - butterscotch pie
+  - spider cider
+  - temmie flakes
+  - dog salad
+  - instant noodles
+  - crab apple
+  - sea tea
+  - scoobie snacks
+  - cinnamon bun
+  - Ishan's fine selection of cheese
