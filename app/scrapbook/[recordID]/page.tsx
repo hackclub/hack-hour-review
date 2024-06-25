@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
 import { getNameByScrapId } from "app/lib/slack";
+import JsonMessageFormatter from "app/lib/messages";
 
 export default function Scrapbook() {
   const [name, setName] = useState("");
@@ -85,7 +86,9 @@ export default function Scrapbook() {
       </div>
 
       <div className="mx-auto bg-gray-800 w-[85vw] h-[70vh] rounded-2xl overflow-y-scroll overflow-x-hidden">
-        <p>{JSON.stringify(scrap.sessions[curSession], null, 2)}</p>
+        <JsonMessageFormatter
+          data={scrap.sessions[curSession]}
+        ></JsonMessageFormatter>
       </div>
       <div className="w-screen h-[15vh] bottom-10 py-12 grid grid-rows-1 grid-cols-3 gap-x-4 px-4">
         <button className="bg-orange-400 rounded-md" onClick={undoSession}>
