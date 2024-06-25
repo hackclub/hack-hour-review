@@ -113,6 +113,17 @@ export async function getAllScrapbooks({ token = null } = {}) {
   return records.map((r) => r.id);
 }
 
+export async function getUnreviewedScrapbooks({ token = null } = {}) {
+  const airtableToken = token || process.env.AIRTABLE_TOKEN;
+  const baseID = "app4kCWulfB02bV8Q";
+  const base = new Airtable({ apiKey: airtableToken }).base(baseID);
+  const table = base("Scrapbook");
+  const records = await table.select({
+    filterByFormula: "NOT({Approved})",
+  }).all();
+  return records.map((r) => r.id);
+}
+
 export async function getNameByScrapId(id, { token = null } = {}) {
   const baseID = "app4kCWulfB02bV8Q";
   const base = new Airtable({
