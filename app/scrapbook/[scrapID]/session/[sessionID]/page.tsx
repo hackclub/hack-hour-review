@@ -7,6 +7,7 @@ import JsonMessageFormatter from "app/components/JsonMessageFormatter";
 import SlackThread from "../../../../components/SlackThread";
 import Header from "app/components/Header"
 import Loading from "app/scrapbook/loading";
+import Card from "app/components/Card";
 
 const ReviewButton = ({text, action, activeButton, color}) => {
   let buttonText = text
@@ -112,8 +113,11 @@ export default function Scrapbook() {
         />
       </div>
 
-      <SlackThread messages={scrap.messages} slackURL={scrap.slackURL} />
 
+      <Card>
+        <h1>#scrapbook posts</h1>
+        <SlackThread messages={scrap.messages} slackURL={scrap.slackURL} />
+      </Card>
       <JsonMessageFormatter
         data={scrap.sessions[sessionIndex]}
       ></JsonMessageFormatter>
