@@ -126,6 +126,7 @@ export async function getUnreviewedScrapbooks({ token = null } = {}) {
 
 export async function getNameByScrapId(id, { token = null } = {}) {
   const baseID = "app4kCWulfB02bV8Q";
+  // whoops! just invalidated this token...
   const base = new Airtable({
     apiKey:
       "patWjLexBaaOT8HdU.40694c6110a7976db421576678667e285854c2eb6e6b7394e7adda373e874d68",
