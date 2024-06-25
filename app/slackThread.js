@@ -15,7 +15,7 @@ const SlackMessage = ({ message }) => {
         {message.files.map((file, i) => (
           <p key={i}>
             <em>{message.user} uploaded</em>{" "}
-            <a href="file.thumb_480" target="_blank">
+            <a href={file.thumb_480} target="_blank" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
               {file.title}
             </a>
           </p>
@@ -79,11 +79,11 @@ export default function SlackThread(props) {
   return (
     <>
       <h2>Message Thread</h2>
-      <button onClick={() => setGhView(true)} disabled={ghView}>
-        Only GH links
+      <button onClick={() => setGhView(true)} className={`${ghView ? 'bg-blue-600' : 'bg-blue-500'} hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}>
+        GH links <span>{githubLinks.length}</span>
       </button>
-      <button onClick={() => setGhView(false)} disabled={!ghView}>
-        All Slack Messages
+      <button onClick={() => setGhView(false)} className={`${ghView ? 'bg-blue-500' : 'bg-blue-600'} hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}>
+        All Slack Messages <span>{filteredMessages.length}</span>
       </button>
       {ghView ? (
         <GithubMessages githubLinks={githubLinks} />
