@@ -15,12 +15,12 @@ export default function Scrapbook() {
   const [error, setError] = useState(null);
   const [curSession, setCurSession] = useState(0);
   const params = useParams();
-  const { recordID } = params;
+  const { scrapID } = params;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`/api/scrapbook/${recordID}`);
+        const response = await fetch(`/api/scrapbook/${scrapID}`);
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -34,7 +34,7 @@ export default function Scrapbook() {
     };
 
     fetchData();
-  }, [recordID]);
+  }, [scrapID]);
 
   useEffect(() => {
     if (scrap) {
@@ -98,17 +98,17 @@ export default function Scrapbook() {
       </div>
       <div className="w-screen h-[15vh] bottom-10 py-12 grid grid-rows-1 grid-cols-3 gap-x-4 px-4">
         <button className="bg-orange-400 rounded-md" onClick={undoSession}>
-          <p className="text-center m-4 lg:text-lg md:text-md sm:text-sm">
+          <p className="text-center mx-4 lg:text-lg md:text-md sm:text-sm">
             Previous
           </p>
         </button>
         <button className="bg-red-400 rounded-md" onClick={rejectSession}>
-          <p className="text-center m-4 lg:text-lg md:text-md sm:text-sm">
+          <p className="text-center mx-4 lg:text-lg md:text-md sm:text-sm">
             Reject
           </p>
         </button>
         <button className="bg-green-400 rounded-md" onClick={approveSession}>
-          <p className="text-center m-4 lg:text-lg md:text-md sm:text-sm">
+          <p className="text-center mx-4 lg:text-lg md:text-md sm:text-sm">
             Approve
           </p>
         </button>
