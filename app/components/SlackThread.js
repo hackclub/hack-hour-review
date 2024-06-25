@@ -63,9 +63,17 @@ const GithubMessages = (props) => {
 
 export default function SlackThread({messages, slackURL}) {
   const filteredMessages = messages.filter((message) => !message.bot_id);
-  const githubLinks = filteredMessages
+  let githubLinks = new Set()
+  filteredMessages
     .map((msg) => msg.text)
-    .filter((text) => text.includes("github.com"));
+    .filter((text) => text.includes("github"))
+    .forEach(text => {
+      const matches = text.match(/https:\/\/github.com\/[^ ]+/g) || [];
+      console.log({matches})
+      const removedCarrotMatches = matches.map(match => match.replace('>', ''))
+      githubLinks.add(...removedCarrotMatches)
+    });
+  githubLinks = Array.from(githubLinks)
 
   const hasGithubLinks = githubLinks.length > 0;
 
@@ -77,7 +85,7 @@ export default function SlackThread({messages, slackURL}) {
 
   return (
     <>
-      <h2><a href={slackURL} target="_blank">Message Thread</a></h2>
+      <h2><a href={slackURL} target="_blank">Go to message thread</a></h2>
       <button onClick={() => setGhView(true)} className={`${ghView ? 'bg-blue-600' : 'bg-blue-500'} hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}>
         GH links <span>{githubLinks.length}</span>
       </button>
