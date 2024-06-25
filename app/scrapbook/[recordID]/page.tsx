@@ -5,6 +5,9 @@ import React, { useEffect, useState, useCallback } from "react";
 import { getNameByScrapId } from "app/lib/slack";
 import JsonMessageFormatter from "app/lib/messages";
 
+import pluralize from "../../lib/pluralize"
+import SlackThread from "../../slackThread"
+
 export default function Scrapbook() {
   const [name, setName] = useState("");
   const [scrap, setScrap] = useState(null);
@@ -75,15 +78,17 @@ export default function Scrapbook() {
     <>
       <div className="h-[15vh]">
         <p className="text-xl text-center">
-          You're reviewing {name}'s {sessionOrSessions}!
+          You're reviewing {name}'s scrapbook post!
         </p>
         <p className="text-center">
-          They have {scrap.sessions.length} {sessionOrSessions} to review.
+          They have {pluralize('session', scrap.sessions.length, true)} to review.
         </p>
         <p className="text-center">
           You are reviewing session #{curSession + 1}
         </p>{" "}
       </div>
+
+      <SlackThread messages={scrap.sessions[curSession].messages} />
 
       <div className="mx-auto bg-gray-800 w-[85vw] h-[70vh] rounded-2xl overflow-y-scroll overflow-x-hidden">
         <JsonMessageFormatter
