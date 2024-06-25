@@ -152,7 +152,7 @@ export async function updateSession({recordID, status = null, percent = null, to
   return record
 }
 
-export async function attemptApproveScrapbook({scrapbookRecordID, airtableToken}) {
+export async function attemptApproveScrapbook({scrapbookRecordID, token = null}) {
   // if all sessions are reviewed, mark as approved.
   // if some sessions are unreviewed, do nothing.
   if (!scrapbookRecordID) { throw new Error('scrapbookRecordID is required') }
