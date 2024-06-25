@@ -30,7 +30,14 @@ export default function Page() {
       ) : (
         <ul>
           {scrapbooks.map((k) => {
-            return <ul>{k}</ul>;
+            return (
+              <>
+                <a className="text-blue-500 underline" href={"/scrapbook/" + k}>
+                  {k}
+                </a>
+                <br />
+              </>
+            );
           })}
         </ul>
       )}
