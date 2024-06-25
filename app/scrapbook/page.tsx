@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 import sample from '../lib/sample'
-import Loading from "./loading";
+import Loading from "../components/Loading";
 
 export default function Page() {
   const [scrapbooks, setScrapbooks] = useState([]);

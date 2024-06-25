@@ -6,7 +6,7 @@ import JsonMessageFormatter from "app/components/JsonMessageFormatter";
 
 import SlackThread from "../../../../components/SlackThread";
 import Header from "app/components/Header"
-import Loading from "app/scrapbook/loading";
+import Loading from "app/components/Loading";
 import Card from "app/components/Card";
 
 const ReviewButton = ({text, action, activeButton, color}) => {
