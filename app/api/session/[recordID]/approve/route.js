@@ -1,4 +1,6 @@
-import { updateSession } from "@/app/lib/slack"
+"use server"
+
+import { updateSession } from "../../../../lib/slack"
 
 // POST /api/session/[recordID]/approve
 export async function POST(_req, {params}) {

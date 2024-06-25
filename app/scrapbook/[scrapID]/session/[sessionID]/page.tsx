@@ -2,21 +2,48 @@
 
 import { useParams } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
-import JsonMessageFormatter from "app/lib/messages";
+import JsonMessageFormatter from "app/components/JsonMessageFormatter";
 
-import SlackThread from "../../../../slackThread";
-import Header from "app/lib/header";
+import SlackThread from "../../../../components/SlackThread";
+import Header from "app/components/Header"
 import Loading from "app/scrapbook/loading";
+
+const ReviewButton = ({text, action, activeButton, color}) => {
+  let buttonText = text
+  let buttonColor = color
+
+  const currentlyLoading = activeButton?.toLowerCase()?.includes(text)
+  const anotherLoading = activeButton != null && !currentlyLoading
+  if (currentlyLoading) {
+    buttonText = "Loading..."
+  }
+  if (anotherLoading) {
+    buttonColor = "gray"
+  }
+
+  return (
+    <button className={`bg-${buttonColor}-400 rounded-md`} onClick={action}>
+      <p className="text-center mx-4 lg:text-lg md:text-md sm:text-sm">
+        {buttonText}
+      </p>
+    </button>
+  );
+}
 
 export default function Scrapbook() {
   const [pageIsLoading, setPageIsLoading] = useState(true);
-  const [buttonStates, setButtonStates] = useState(["none", "none", "none"]);
+  const [buttonLoading, setButtonLoading] = useState(null); // null, "approved", "rejected", "unreviewed"
   const [scrap, setScrap] = useState(null);
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-  const [curSession, setCurSession] = useState(0);
+  const [sessionIndex, setSessionIndex] = useState(0);
+
   const params = useParams();
   const { scrapID, sessionID } = params;
+
+  const session = () => {
+    return scrap?.sessions[sessionIndex]
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,55 +66,59 @@ export default function Scrapbook() {
   }, [scrapID]);
 
   const approveSession = async () => {
-    setButtonStates(["otherPressed", "otherPressed", "pressed"]);
+    setButtonLoading("approved");
+
     const resp = await (
-      await fetch(`/api/session/${sessionID}/approve`)
+      await fetch(`/api/session/${sessionID}/approve`, {method: 'POST'})
     ).json();
-    if (curSession >= scrap.sessions.length - 1) {
+
+    setButtonLoading(null);
+    if (sessionIndex >= scrap.sessions.length - 1) {
       // next session
     } else {
-      setCurSession(curSession + 1);
+      setSessionIndex(sessionIndex + 1);
     }
   };
 
-  const rejectSession = () => {
+  const rejectSession = async () => {
+    const resp = await (
+      await fetch(`/api/session/${sessionID}/reject`, {method: 'POST'})
+    ).json();
+
     // reject session, and then...
-    if (curSession >= scrap.sessions.length - 1) {
+    if (sessionIndex >= scrap.sessions.length - 1) {
       // next session
     } else {
-      setCurSession(curSession + 1);
+      setSessionIndex(sessionIndex + 1);
     }
   };
 
   const undoSession = useCallback(() => {
-    setCurSession((prev) => Math.max(prev - 1, 0));
+    setSessionIndex((prev) => Math.max(prev - 1, 0));
   }, []);
 
   if (pageIsLoading) {
     return <Loading />;
   }
   if (error) return <p>Error: {error}</p>;
-  if (!scrap) return null;
 
   return (
     <>
       <div className="h-[15vh]">
         <Header
           name={user.name}
-          length={scrap.sessions.length}
-          curSession={curSession}
+          scrapbookLink={scrap.slackURL}
+          sessionIndex={sessionIndex}
         />
       </div>
 
-      <SlackThread messages={scrap.sessions[curSession].messages} />
+      <SlackThread messages={scrap.messages} slackURL={scrap.slackURL} />
 
-      <div className="mx-auto bg-gray-800 w-[85vw] h-[70vh] rounded-2xl">
-        <JsonMessageFormatter
-          data={scrap.sessions[curSession]}
-        ></JsonMessageFormatter>
-      </div>
-      <div className="w-screen h-[15vh] bottom-10 py-12 grid grid-rows-1 grid-cols-3 gap-x-4 px-4">
-        <button
+      <JsonMessageFormatter
+        data={scrap.sessions[sessionIndex]}
+      ></JsonMessageFormatter>
+      {/* <div className="w-screen h-[15vh] bottom-10 py-12 grid grid-rows-1 grid-cols-3 gap-x-4 px-4"> */}
+        {/* <button
           className="bg-orange-400 rounded-md disabled:bg-gray-400"
           onClick={undoSession}
           disabled={buttonStates[0] === "otherPressed" ? true : null}
@@ -95,26 +126,12 @@ export default function Scrapbook() {
           <p className="text-center mx-4 lg:text-lg md:text-md sm:text-sm">
             {buttonStates[0] !== "pressed" ? "Previous" : "Going Back..."}
           </p>
-        </button>
-        <button
-          className="bg-red-400 rounded-md disabled:bg-gray-400"
-          onClick={rejectSession}
-          disabled={buttonStates[1] === "otherPressed" ? true : null}
-        >
-          <p className="text-center mx-4 lg:text-lg md:text-md sm:text-sm">
-            {buttonStates[1] !== "pressed" ? "Reject" : "Rejecting..."}
-          </p>
-        </button>
-        <button
-          className="bg-green-400 rounded-md disabled:bg-gray-400"
-          onClick={approveSession}
-          disabled={buttonStates[2] === "otherPressed" ? true : null}
-        >
-          <p className="text-center mx-4 lg:text-lg md:text-md sm:text-sm">
-            {buttonStates[2] !== "pressed" ? "Approve" : "Approving..."}
-          </p>
-        </button>
-      </div>
+        </button> */}
+        <SlackThread messages={session().messages} slackURL={session().slackURL} />
+
+        <ReviewButton text="Reject" action={rejectSession} activeButton={buttonLoading} color="orange" />
+        <ReviewButton text="Approve" action={approveSession} activeButton={buttonLoading} color="green" />
+      {/* </div> */}
     </>
   );
 }

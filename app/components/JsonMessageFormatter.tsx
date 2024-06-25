@@ -13,11 +13,12 @@ export default function JsonMessageFormatter({ data }) {
   );
   // I'm sorry in advance.
   return (
-    <div className="w-full h-full p-2">
-      <pre
-        className="w-full h-full p-2 overflow-y-scroll overflow-x-hidden"
-        dangerouslySetInnerHTML={{ __html: highlightedJson }}
-      ></pre>
-    </div>
+    <details>
+      <summary>See JSON</summary>
+        <pre
+          className="w-full h-full p-2 overflow-y-scroll overflow-x-hidden"
+          dangerouslySetInnerHTML={{ __html: highlightedJson }}
+        ></pre>
+    </details>
   );
 }

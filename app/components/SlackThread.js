@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import HTMLComment from "./htmlComment";
+import HTMLComment from "../htmlComment";
 
 const NoSlackMessages = () => <div>No Slack Messages</div>;
 
@@ -61,8 +61,7 @@ const GithubMessages = (props) => {
   );
 };
 
-export default function SlackThread(props) {
-  const { messages } = props || [];
+export default function SlackThread({messages, slackURL}) {
   const filteredMessages = messages.filter((message) => !message.bot_id);
   const githubLinks = filteredMessages
     .map((msg) => msg.text)
@@ -78,7 +77,7 @@ export default function SlackThread(props) {
 
   return (
     <>
-      <h2>Message Thread</h2>
+      <h2><a href={slackURL} target="_blank">Message Thread</a></h2>
       <button onClick={() => setGhView(true)} className={`${ghView ? 'bg-blue-600' : 'bg-blue-500'} hover:bg-blue-700 text-white font-bold py-2 px-4 rounded`}>
         GH links <span>{githubLinks.length}</span>
       </button>

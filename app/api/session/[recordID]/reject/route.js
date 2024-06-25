@@ -1,3 +1,5 @@
+"use server"
+
 import { updateSession } from "@/app/lib/slack"
 
 // POST /api/session/[recordID]/approve

@@ -1,3 +1,4 @@
+"use server";
 const scrapbookChannel = "C01504DCLVD";
 const arcadeChannel = "C06SBHMQU8G";
 
