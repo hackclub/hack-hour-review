@@ -72,25 +72,36 @@ export default function Scrapbook() {
 
   return (
     <>
-      <p className="text-xl text-center">
-        You're reviewing {name}'s {sessionOrSessions}!
-      </p>
-      <p className="text-center">
-        They have {scrap.sessions.length} {sessionOrSessions} to review.
-      </p>
-      <p className="text-center">You are reviewing session #{curSession + 1}</p>
-      <div className="mx-auto mt-20 bg-gray-800 w-[52rem] h-[40rem] rounded-2xl overflow-y-scroll overflow-x-hidden">
-        <p>{JSON.stringify(scrap.sessions[0], null, 2)}</p>
+      <div className="h-[15vh]">
+        <p className="text-xl text-center">
+          You're reviewing {name}'s {sessionOrSessions}!
+        </p>
+        <p className="text-center">
+          They have {scrap.sessions.length} {sessionOrSessions} to review.
+        </p>
+        <p className="text-center">
+          You are reviewing session #{curSession + 1}
+        </p>{" "}
       </div>
-      <div className="w-screen absolute bottom-4 py-12 grid grid-rows-1 grid-cols-3 gap-x-4 px-4">
+
+      <div className="mx-auto bg-gray-800 w-[85vw] h-[70vh] rounded-2xl overflow-y-scroll overflow-x-hidden">
+        <p>{JSON.stringify(scrap.sessions[curSession], null, 2)}</p>
+      </div>
+      <div className="w-screen h-[15vh] bottom-10 py-12 grid grid-rows-1 grid-cols-3 gap-x-4 px-4">
         <button className="bg-orange-400 rounded-md" onClick={undoSession}>
-          <p className="text-center m-4">Previous Session</p>
+          <p className="text-center m-4 lg:text-lg md:text-md sm:text-sm">
+            Previous
+          </p>
         </button>
         <button className="bg-red-400 rounded-md" onClick={rejectSession}>
-          <p className="text-center m-4">Reject, Next Session</p>
+          <p className="text-center m-4 lg:text-lg md:text-md sm:text-sm">
+            Reject
+          </p>
         </button>
         <button className="bg-green-400 rounded-md" onClick={approveSession}>
-          <p className="text-center m-4">Approve, Next Session</p>
+          <p className="text-center m-4 lg:text-lg md:text-md sm:text-sm">
+            Approve
+          </p>
         </button>
       </div>
     </>

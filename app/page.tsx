@@ -1,5 +1,39 @@
-import styles from "./page.module.css";
+"use client";
+import { useEffect, useState } from "react";
 
-export default function Home() {
-  return <main className={styles.main}></main>;
+export default function Page() {
+  const [scrapbooks, setScrapbooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("/api/scrapbook/unreviewed");
+        const data = await response.json();
+        console.log(data);
+        setScrapbooks(data.scrapbooks);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  return (
+    <>
+      <h1 className="text-3xl text-center">Review-O-Matic 3000</h1>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <ul>
+          {scrapbooks.map((k) => {
+            return <ul>{k}</ul>;
+          })}
+        </ul>
+      )}
+    </>
+  );
 }
