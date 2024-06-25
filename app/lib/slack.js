@@ -125,12 +125,9 @@ export async function getUnreviewedScrapbooks({ token = null } = {}) {
 }
 
 export async function getNameByScrapId(id, { token = null } = {}) {
+  const airtableToken = token || process.env.AIRTABLE_TOKEN;
   const baseID = "app4kCWulfB02bV8Q";
-  // whoops! just invalidated this token...
-  const base = new Airtable({
-    apiKey:
-      "patWjLexBaaOT8HdU.40694c6110a7976db421576678667e285854c2eb6e6b7394e7adda373e874d68",
-  }).base(baseID);
+  const base = new Airtable({ apiKey: airtableToken }).base(baseID);
   const usersTable = base("Users");
   const scrapTable = base("Scrapbook");
   return (await usersTable.find((await scrapTable.find(id)).fields["User"])) // for some reason, tsc says this await isn't required. it is
