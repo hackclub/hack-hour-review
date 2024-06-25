@@ -10,7 +10,7 @@ import SlackMention from "./SlackMention"
 const SlackMessage = ({ message }) => {
   return (
     <>
-      <em><SlackMention userID={message.user} />{message.user}</em>: {message.text}
+      <em><SlackMention userID={message.user} /></em>: {message.text}
       {message.files && message.files.length > 0 && (
         <ul>
           {message.files.map((file, i) => (

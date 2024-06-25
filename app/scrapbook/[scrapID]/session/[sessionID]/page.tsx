@@ -131,7 +131,11 @@ export default function Scrapbook() {
             {buttonStates[0] !== "pressed" ? "Previous" : "Going Back..."}
           </p>
         </button> */}
-        <SlackThread messages={session().messages} slackURL={session().slackURL} />
+        <Card>
+
+        <h1>#arcade posts</h1>
+          <SlackThread messages={session().messages} slackURL={session().slackURL} />
+        </Card>
 
         <ReviewButton text="Reject" action={rejectSession} activeButton={buttonLoading} color="orange" />
         <ReviewButton text="Approve" action={approveSession} activeButton={buttonLoading} color="green" />
