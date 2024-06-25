@@ -4,7 +4,7 @@ import { updateSession } from "@/app/lib/slack"
 export async function POST(_req, {params}) {
   const { recordID } = params
 
-  const result = await updateSession({recordID, status: "Approved"})
+  const result = await updateSession({recordID, status: "Rejected"})
 
   return Response.json( result )
 }

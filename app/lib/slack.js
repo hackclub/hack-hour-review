@@ -152,9 +152,7 @@ export async function updateSession({recordID, status = null, percent = null, to
   return record
 }
 
-export async function attemptApproveScrapbook({scrapbookRecordID, token = null}) {
-  // if all sessions are reviewed, mark as approved.
-  // if some sessions are unreviewed, do nothing.
+export async function approveScrapbook({scrapbookRecordID, token = null}) {
   if (!scrapbookRecordID) { throw new Error('scrapbookRecordID is required') }
 
   const airtableToken = token || process.env.AIRTABLE_TOKEN
@@ -163,7 +161,9 @@ export async function attemptApproveScrapbook({scrapbookRecordID, token = null})
   const baseID = "app4kCWulfB02bV8Q"
   const base = new Airtable({ apiKey: airtableToken }).base(baseID)
   const table = base('Scrapbook')
-  const record = await table.find(scrapbookRecordID)
+
+  const record = table.update(scrapbookRecordID, { 'Approved': true })
+  return record
 }
 
 // async function test() {
