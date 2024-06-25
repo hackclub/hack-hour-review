@@ -91,7 +91,7 @@ export default function Scrapbook() {
 
       <SlackThread messages={scrap.sessions[curSession].messages} />
 
-      <div className="mx-auto bg-gray-800 w-[85vw] h-[70vh] rounded-2xl overflow-y-scroll overflow-x-hidden">
+      <div className="mx-auto bg-gray-800 w-[85vw] h-[70vh] rounded-2xl">
         <JsonMessageFormatter
           data={scrap.sessions[curSession]}
         ></JsonMessageFormatter>
