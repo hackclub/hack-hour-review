@@ -5,30 +5,25 @@ import HTMLComment from "../htmlComment";
 
 const NoSlackMessages = () => <div>No Slack Messages</div>;
 
+
+import SlackMention from "./SlackMention"
 const SlackMessage = ({ message }) => {
-  if (!message) {
-    return null;
-  } else if (message.text == "" && message.files) {
-    // file upload
-    return (
-      <>
-        {message.files.map((file, i) => (
-          <p key={i}>
-            <em>{message.user} uploaded</em>{" "}
-            <a href={file.thumb_480} target="_blank" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-              {file.title}
-            </a>
-          </p>
-        ))}
-      </>
-    );
-  } else {
-    return (
-      <span>
-        <em>Username not yet implemented</em>: {message.text}
-      </span>
-    );
-  }
+  return (
+    <>
+      <em><SlackMention userID={message.user} />{message.user}</em>: {message.text}
+      {message.files && message.files.length > 0 && (
+        <ul>
+          {message.files.map((file, i) => (
+            <li key={i}>
+              <a href={file.thumb_480} target="_blank" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                {file.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  )
 };
 
 const SlackMessages = ({ messages }) => {
@@ -45,7 +40,6 @@ const SlackMessages = ({ messages }) => {
 };
 const GithubMessages = (props) => {
   const { githubLinks } = props;
-  console.log({ githubLinks })
   return (
     <div>
       <ul>
