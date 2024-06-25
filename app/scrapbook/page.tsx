@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Loading from "./loading";
 
 export default function Page() {
   const [scrapbooks, setScrapbooks] = useState([]);
@@ -22,25 +23,25 @@ export default function Page() {
     fetchData();
   }, []);
 
+  if (loading) {
+    return <Loading />;
+  }
+
   return (
     <>
       <h1 className="text-3xl text-center">Review-O-Matic 3000</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <ul>
-          {scrapbooks.map((k) => {
-            return (
-              <>
-                <a className="text-blue-500 underline" href={"/scrapbook/" + k}>
-                  {k}
-                </a>
-                <br />
-              </>
-            );
-          })}
-        </ul>
-      )}
+      <ul>
+        {scrapbooks.map((k) => {
+          return (
+            <>
+              <a className="text-blue-500 underline" href={"/scrapbook/" + k}>
+                {k}
+              </a>
+              <br />
+            </>
+          );
+        })}
+      </ul>
     </>
   );
 }

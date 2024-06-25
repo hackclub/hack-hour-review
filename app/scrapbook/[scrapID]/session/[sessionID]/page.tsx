@@ -2,18 +2,17 @@
 
 import { useParams } from "next/navigation";
 import React, { useEffect, useState, useCallback } from "react";
-import { getNameByScrapId } from "app/lib/slack";
 import JsonMessageFormatter from "app/lib/messages";
 
-import pluralize from "../../../../lib/pluralize";
 import SlackThread from "../../../../slackThread";
 import Header from "app/lib/header";
+import Loading from "app/scrapbook/loading";
 
 export default function Scrapbook() {
+  const [pageIsLoading, setPageIsLoading] = useState(true);
   const [buttonStates, setButtonStates] = useState(["none", "none", "none"]);
-  const [name, setName] = useState("");
   const [scrap, setScrap] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [curSession, setCurSession] = useState(0);
   const params = useParams();
@@ -28,28 +27,22 @@ export default function Scrapbook() {
         }
         const data = await response.json();
         setScrap(data.scrap);
+        setUser(data.user);
       } catch (error) {
         setError(error.message);
       } finally {
-        setLoading(false);
+        setPageIsLoading(false);
       }
     };
 
     fetchData();
   }, [scrapID]);
 
-  useEffect(() => {
-    if (scrap) {
-      const getName = async () => {
-        setName(await getNameByScrapId(scrap.id));
-      };
-      getName();
-    }
-  }, [scrap]);
-
   const approveSession = async () => {
     setButtonStates(["otherPressed", "otherPressed", "pressed"]);
-    // const resp = await fetch(`/api/session/${sessionID}/approve`);
+    const resp = await (
+      await fetch(`/api/session/${sessionID}/approve`)
+    ).json();
     if (curSession >= scrap.sessions.length - 1) {
       // next session
     } else {
@@ -70,23 +63,23 @@ export default function Scrapbook() {
     setCurSession((prev) => Math.max(prev - 1, 0));
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (pageIsLoading) {
+    return <Loading />;
+  }
   if (error) return <p>Error: {error}</p>;
   if (!scrap) return null;
-
-  const sessionOrSessions =
-    scrap.sessions.length === 1 ? "session" : "sessions";
 
   return (
     <>
       <div className="h-[15vh]">
         <Header
-          name={name}
+          name={user.name}
           length={scrap.sessions.length}
           curSession={curSession}
         />
-        <SlackThread messages={scrap.sessions[curSession].messages} />
       </div>
+
+      <SlackThread messages={scrap.sessions[curSession].messages} />
 
       <div className="mx-auto bg-gray-800 w-[85vw] h-[70vh] rounded-2xl">
         <JsonMessageFormatter
