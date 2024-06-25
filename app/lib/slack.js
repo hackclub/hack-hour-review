@@ -65,6 +65,25 @@ export async function getUserRecord({ recordID, token = null }) {
   return record;
 }
 
+export async function getUserProfile({ slackID, token = null }) {
+  const slackToken = token || process.env.SLACK_TOKEN;
+  if (!slackID || !slackToken) {
+    throw new Error("slackID and slackToken is required");
+  }
+
+  const response = await fetch(
+    `https://slack.com/api/users.profile.get?user=${slackID}`,
+    {
+      headers: { Authorization: `Bearer ${slackToken}` },
+    }
+  ).then((r) => r.json());
+
+  return {
+    username: response?.profile?.display_name,
+    avatar: response?.profile?.image_192,
+  }
+}
+
 export async function getDataForReview({
   scrapbookRecordID,
   airtableToken,
