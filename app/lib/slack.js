@@ -147,7 +147,7 @@ export async function getDataForReview({
       const sessionID = sessionIDs[i];
       jobs.push(
         getArcadeRecord({ recordID: sessionID, token: airtableToken }).then(
-          (record) => {
+          async (record) => {
             const sessionFields = {
               id: record.id,
               slackURL: record.get("Code URL") || "",
@@ -158,7 +158,7 @@ export async function getDataForReview({
               messages: [], // will code this later
             };
             if (includeMessages) {
-              getSlackThread({
+              await getSlackThread({
                 threadTS: sessionFields.slackTS,
                 channel: arcadeChannel,
                 token: slackToken,
